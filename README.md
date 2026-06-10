@@ -1,11 +1,3 @@
-cd BKC_IIC_Demo/Backend
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python seed.py
-uvicorn main:app --reload --port 8000
-
-
 # FastAPI Project Setup & Run Guide
 
 ## 1. Create Virtual Environment
