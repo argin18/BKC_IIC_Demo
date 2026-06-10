@@ -3,10 +3,9 @@ from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-import analytics
-import crud
-import schemas
-from database import get_db
+from app import crud, schemas
+from app.api.deps import get_db
+from app.services import analytics
 
 router = APIRouter(prefix="/devices", tags=["devices"])
 
@@ -26,7 +25,7 @@ def list_devices(db: Session = Depends(get_db)):
             start=datetime.now(timezone.utc) - timedelta(days=7),
             limit=5000,
         )
-        status = analytics._device_status(device, recent)
+        status = analytics.device_status(device, recent)
 
         response.append(
             schemas.DeviceWithStatus(
@@ -68,7 +67,7 @@ def get_device_detail(device_id: int, db: Session = Depends(get_db)):
         summary={
             "total_kwh_24h": total_kwh,
             "cost_npr": analytics.calculate_cost_npr(total_kwh),
-            "status": analytics._device_status(device, readings),
+            "status": analytics.device_status(device, readings),
         },
     )
 

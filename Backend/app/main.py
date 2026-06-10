@@ -4,14 +4,18 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from config import get_settings
-from database import Base, engine, verify_db_connection
-from routers import ai, analytics, devices, readings
+from app.api.v1.router import api_router
+from app.core.config import get_settings
+from app.core.database import Base, engine, verify_db_connection
 
 logging.basicConfig(level=logging.INFO)
 settings = get_settings()
 
-app = FastAPI(title="IIROS API", version="1.0.0", description="Intelligent Infrastructure & Resource Optimization System")
+app = FastAPI(
+    title="IIROS API",
+    version="1.0.0",
+    description="Intelligent Infrastructure & Resource Optimization System",
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,10 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(devices.router, prefix="/api")
-app.include_router(readings.router, prefix="/api")
-app.include_router(analytics.router, prefix="/api")
-app.include_router(ai.router, prefix="/api")
+app.include_router(api_router, prefix="/api")
 
 
 @app.on_event("startup")

@@ -3,12 +3,10 @@ from datetime import date, datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-import ai_service
-import analytics
-import crud
-import schemas
-from database import get_db
-from models import Device, EnergyReading
+from app import crud, schemas
+from app.api.deps import get_db
+from app.models import Device, EnergyReading
+from app.services import ai_service, analytics
 
 router = APIRouter(tags=["ai"])
 

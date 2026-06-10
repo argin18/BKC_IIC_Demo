@@ -4,8 +4,7 @@ from decimal import Decimal
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
-import models
-import schemas
+from app import models, schemas
 
 
 def get_devices(db: Session, active_only: bool = True) -> list[models.Device]:

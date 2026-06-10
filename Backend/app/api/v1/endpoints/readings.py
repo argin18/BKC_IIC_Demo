@@ -3,9 +3,8 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-import crud
-import schemas
-from database import get_db
+from app import crud, schemas
+from app.api.deps import get_db
 
 router = APIRouter(prefix="/readings", tags=["readings"])
 

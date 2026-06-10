@@ -5,8 +5,8 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
-from config import get_settings
-from models import Device, EnergyReading
+from app.core.config import get_settings
+from app.models import Device, EnergyReading
 
 settings = get_settings()
 
@@ -57,7 +57,7 @@ def get_peak_hour_data(readings: list[EnergyReading]) -> list[dict[str, Any]]:
     return result
 
 
-def _device_status(device: Device, readings: list[EnergyReading]) -> str:
+def device_status(device: Device, readings: list[EnergyReading]) -> str:
     if not readings:
         return "GREEN"
 
@@ -103,7 +103,7 @@ def calculate_efficiency_score(
     overloaded = idle_waste = 0
     for device in devices:
         device_readings = readings_by_device.get(device.id, [])
-        status = _device_status(device, device_readings)
+        status = device_status(device, device_readings)
         if status == "RED":
             overloaded += 1
         elif status == "ORANGE":
@@ -188,7 +188,7 @@ def build_device_analytics(
                 "total_kwh": total_kwh,
                 "cost_npr": round(calculate_cost_npr(total_kwh), 2),
                 "efficiency_pct": efficiency_pct,
-                "status": _device_status(device, device_readings),
+                "status": device_status(device, device_readings),
             }
         )
     return sorted(results, key=lambda item: item["total_kwh"], reverse=True)
