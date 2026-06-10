@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { CalendarRange, FileText, Leaf, WalletCards } from "lucide-react";
 
 import { ReportDisplay } from "@/components/ai/ReportDisplay";

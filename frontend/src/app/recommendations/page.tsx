@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Bot, Sparkles, WalletCards } from "lucide-react";
 
 import { RecommendationCard } from "@/components/ai/RecommendationCard";

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { AlertTriangle, Clock3, Gauge, Leaf, WalletCards, Zap } from "lucide-react";
 
 import { RecommendationCard } from "@/components/ai/RecommendationCard";

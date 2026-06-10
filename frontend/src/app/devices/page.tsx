@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Activity, Gauge, PlugZap, TriangleAlert } from "lucide-react";
 
 import { DeviceBarChart } from "@/components/charts/DeviceBarChart";

@@ -197,7 +197,7 @@ def build_device_analytics(
 def bucket_trends(readings: list[EnergyReading]) -> list[dict[str, Any]]:
     buckets: dict[datetime, float] = defaultdict(float)
     for reading in readings:
-        bucket = reading.timestamp.replace(minute=0, second=0, microsecond=0)
+        bucket = reading.timestamp.replace(hour=0, minute=0, second=0, microsecond=0)
         buckets[bucket] += float(reading.kwh_consumed)
 
     return [
@@ -250,7 +250,8 @@ def build_analytics_context(
 
 
 def get_analytics_summary(db: Session, days: int = 30) -> dict[str, Any]:
-    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+    now = datetime.now(timezone.utc)
+    cutoff = now - timedelta(days=days)
     devices = db.query(Device).filter(Device.is_active.is_(True)).all()
     readings = (
         db.query(EnergyReading)
@@ -258,6 +259,29 @@ def get_analytics_summary(db: Session, days: int = 30) -> dict[str, Any]:
         .all()
     )
     context = build_analytics_context(devices, readings, days)
+
+    prev_cutoff = now - timedelta(days=days * 2)
+    previous_readings = (
+        db.query(EnergyReading)
+        .filter(EnergyReading.timestamp >= prev_cutoff)
+        .filter(EnergyReading.timestamp < cutoff)
+        .all()
+    )
+    previous_context = build_analytics_context(devices, previous_readings, days) if previous_readings else None
+
+    cost_change_pct = 0.0
+    kwh_change_pct = 0.0
+    if previous_context and previous_context["total_cost_npr"] > 0:
+        cost_change_pct = round(
+            ((context["total_cost_npr"] - previous_context["total_cost_npr"]) / previous_context["total_cost_npr"]) * 100,
+            1,
+        )
+    if previous_context and previous_context["total_kwh"] > 0:
+        kwh_change_pct = round(
+            ((context["total_kwh"] - previous_context["total_kwh"]) / previous_context["total_kwh"]) * 100,
+            1,
+        )
+
     return {
         "total_kwh": context["total_kwh"],
         "cost_npr": context["total_cost_npr"],
@@ -265,6 +289,9 @@ def get_analytics_summary(db: Session, days: int = 30) -> dict[str, Any]:
         "efficiency_score": context["efficiency_score"],
         "co2_kg": context["co2_kg_emitted"],
         "device_count": len(devices),
+        "anomaly_count": len(context["anomaly_days"]),
+        "cost_change_pct": cost_change_pct,
+        "kwh_change_pct": kwh_change_pct,
     }
 
 
