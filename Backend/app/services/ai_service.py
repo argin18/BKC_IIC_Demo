@@ -7,8 +7,8 @@ from typing import Any
 
 from google import genai
 
-from analytics import generate_fallback_recommendations
-from config import get_settings
+from app.core.config import get_settings
+from app.services.analytics import generate_fallback_recommendations
 
 logger = logging.getLogger(__name__)
 settings = get_settings()

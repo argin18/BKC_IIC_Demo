@@ -1,8 +1,13 @@
 import random
+import sys
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
-from database import Base, SessionLocal, engine
-from models import Device, EnergyReading
+BACKEND_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(BACKEND_ROOT))
+
+from app.core.database import Base, SessionLocal, engine  # noqa: E402
+from app.models import Device, EnergyReading  # noqa: E402
 
 DEVICE_CONFIGS = [
     {"name": "AC Unit Floor 1", "device_type": "HVAC", "location": "Block A - Floor 1", "rated_power_kw": 4.5},
